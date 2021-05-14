@@ -12,8 +12,29 @@ router.get(
     })
 );
 
+router.get(
+    ':id',
+    asyncHandler(async (req, res, next) => {
+        res.json();
+    })
+);
+
 router.post(
     '',
+    asyncHandler(async (req, res, next) => {
+        res.json();
+    })
+);
+
+router.put(
+    ':id',
+    asyncHandler(async (req, res, next) => {
+        res.json();
+    })
+);
+
+router.delete(
+    ':id',
     asyncHandler(async (req, res, next) => {
         res.json();
     })
