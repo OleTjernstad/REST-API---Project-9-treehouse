@@ -1,5 +1,6 @@
 'use strict';
 const { Model } = require('sequelize');
+const bcrypt = require('bcryptjs');
 module.exports = (sequelize, DataTypes) => {
     class User extends Model {
         /**
@@ -64,6 +65,10 @@ module.exports = (sequelize, DataTypes) => {
                         args: 6,
                         msg: 'password must be 6 characters or longer'
                     }
+                },
+                set(val) {
+                    const hashedPassword = bcrypt.hashSync(val, 10);
+                    this.setDataValue('password', hashedPassword);
                 }
             }
         },

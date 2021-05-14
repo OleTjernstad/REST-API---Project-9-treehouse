@@ -18,7 +18,7 @@ router.post(
     '',
     asyncHandler(async (req, res, next) => {
         let user;
-        console.log(req.body);
+
         try {
             user = await User.create(req.body);
             res.location('/');
@@ -29,7 +29,7 @@ router.post(
                 error.name === 'SequelizeValidationError' ||
                 error.name === 'SequelizeUniqueConstraintError'
             ) {
-                res.json({ error: 'error' });
+                res.json({ error });
             } else {
                 throw error;
             }
