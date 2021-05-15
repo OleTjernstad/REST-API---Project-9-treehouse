@@ -20,16 +20,39 @@ router.get(
 );
 
 router.get(
-    ':id',
+    '/:id',
     asyncHandler(async (req, res, next) => {
-        res.json();
+        const course = await Course.findByPk(req.params.id, {
+            include: [
+                {
+                    model: User
+                }
+            ]
+        });
+        res.json({ course });
     })
 );
 
 router.post(
     '',
     asyncHandler(async (req, res, next) => {
-        res.json();
+        let course;
+        try {
+            course = await Course.create(req.body);
+            res.location(`/api/courses/${course.id}`);
+            res.status(201).end();
+        } catch (error) {
+            console.log(error);
+            if (
+                error.name === 'SequelizeValidationError' ||
+                error.name === 'SequelizeUniqueConstraintError'
+            ) {
+                const errors = error.errors.map((err) => err.message);
+                res.status(400).json({ errors });
+            } else {
+                throw error;
+            }
+        }
     })
 );
 

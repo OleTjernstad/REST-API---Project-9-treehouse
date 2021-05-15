@@ -80,14 +80,5 @@ module.exports = (sequelize, DataTypes) => {
         }
     );
 
-    // User.associate = (models) => {
-    //     User.belongsTo(models.Person, {
-    //         as: 'director', // alias
-    //         foreignKey: {
-    //             fieldName: 'directorPersonId',
-    //             allowNull: false
-    //         }
-    //     });
-    // };
     return User;
 };
