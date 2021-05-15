@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const { authenticateUser } = require('../middleware/auth-user');
 
 const asyncHandler = require('../tools/handler');
 
@@ -7,8 +8,9 @@ const { User } = require('../models');
 
 router.get(
     '',
+    authenticateUser,
     asyncHandler(async (req, res, next) => {
-        const user = await User.findByPk(1);
+        const user = await User.findByPk(req.currentUser.id);
 
         res.json({ user });
     })
