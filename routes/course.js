@@ -11,9 +11,16 @@ router.get(
     '',
     asyncHandler(async (req, res, next) => {
         const courses = await Course.findAll({
+            attributes: [
+                'title',
+                'description',
+                'estimatedTime',
+                'materialsNeeded'
+            ],
             include: [
                 {
-                    model: User
+                    model: User,
+                    attributes: ['firstName', 'lastName', 'emailAddress']
                 }
             ]
         });
@@ -25,9 +32,16 @@ router.get(
     '/:id',
     asyncHandler(async (req, res, next) => {
         const course = await Course.findByPk(req.params.id, {
+            attributes: [
+                'title',
+                'description',
+                'estimatedTime',
+                'materialsNeeded'
+            ],
             include: [
                 {
-                    model: User
+                    model: User,
+                    attributes: ['firstName', 'lastName', 'emailAddress']
                 }
             ]
         });
