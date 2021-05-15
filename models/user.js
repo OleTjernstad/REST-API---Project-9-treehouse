@@ -9,9 +9,11 @@ module.exports = (sequelize, DataTypes) => {
          * The `models/index` file will call this method automatically.
          */
         static associate(models) {
-            this.hasMany(models.Course, {
-                foreignKey: 'userId ',
-                allowNull: false
+            this.myAssociation = this.hasMany(models.Course, {
+                foreignKey: {
+                    fieldName: 'userId',
+                    allowNull: false
+                }
             });
         }
     }
@@ -77,5 +79,15 @@ module.exports = (sequelize, DataTypes) => {
             modelName: 'User'
         }
     );
+
+    // User.associate = (models) => {
+    //     User.belongsTo(models.Person, {
+    //         as: 'director', // alias
+    //         foreignKey: {
+    //             fieldName: 'directorPersonId',
+    //             allowNull: false
+    //         }
+    //     });
+    // };
     return User;
 };
