@@ -45,7 +45,10 @@ router.get(
                 }
             ]
         });
-        res.json({ course });
+        if (course) {
+            res.json({ course });
+        }
+        res.status(404).json({ errors: ['Course not found'] });
     })
 );
 
@@ -78,14 +81,25 @@ router.put(
     authenticateUser,
     asyncHandler(async (req, res, next) => {
         try {
-            let course = await Course.findByPk(req.params.id);
+            let course = await Course.findByPk(req.params.id, {
+                include: [
+                    {
+                        model: User
+                    }
+                ]
+            });
             if (course) {
-                course = await Course.update(req.body, {
-                    where: { id: req.body.id }
-                });
-                res.status(204).end();
+                if (course.User.id == req.currentUser.id) {
+                    course = await Course.update(req.body, {
+                        where: { id: req.body.id }
+                    });
+                    res.status(204).end();
+                } else {
+                    res.status(403).end();
+                }
+            } else {
+                res.status(404).json({ errors: ['Course not found'] });
             }
-            res.status(404).json({ errors: ['Course not found'] });
         } catch (error) {
             console.log(error);
             if (
@@ -106,12 +120,24 @@ router.delete(
     authenticateUser,
     asyncHandler(async (req, res, next) => {
         try {
-            const course = await Course.findByPk(req.params.id);
+            const course = await Course.findByPk(req.params.id, {
+                include: [
+                    {
+                        model: User
+                    }
+                ]
+            });
+
             if (course) {
-                await course.destroy();
-                res.status(204).end();
+                if (course.User.id == req.currentUser.id) {
+                    await course.destroy();
+                    res.status(204).end();
+                } else {
+                    res.status(403).end();
+                }
+            } else {
+                res.status(404).json({ errors: ['Course not found'] });
             }
-            res.status(404).json({ errors: ['Course not found'] });
         } catch (error) {
             console.log(error);
             if (
