@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 
+const { authenticateUser } = require('../middleware/auth-user');
+
 const asyncHandler = require('../tools/handler');
 
 const { Course, User } = require('../models');
@@ -35,6 +37,7 @@ router.get(
 
 router.post(
     '',
+    authenticateUser,
     asyncHandler(async (req, res, next) => {
         let course;
         try {
@@ -58,6 +61,7 @@ router.post(
 
 router.put(
     '/:id',
+    authenticateUser,
     asyncHandler(async (req, res, next) => {
         try {
             let course = await Course.findByPk(req.params.id);
@@ -85,6 +89,7 @@ router.put(
 
 router.delete(
     '/:id',
+    authenticateUser,
     asyncHandler(async (req, res, next) => {
         try {
             const course = await Course.findByPk(req.params.id);
