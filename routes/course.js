@@ -102,10 +102,7 @@ router.put(
             }
         } catch (error) {
             console.log(error);
-            if (
-                error.name === 'SequelizeValidationError' ||
-                error.name === 'SequelizeUniqueConstraintError'
-            ) {
+            if (error.name === 'SequelizeValidationError') {
                 const errors = error.errors.map((err) => err.message);
                 res.status(400).json({ errors });
             } else {
@@ -140,10 +137,7 @@ router.delete(
             }
         } catch (error) {
             console.log(error);
-            if (
-                error.name === 'SequelizeValidationError' ||
-                error.name === 'SequelizeUniqueConstraintError'
-            ) {
+            if (error.name === 'SequelizeValidationError') {
                 const errors = error.errors.map((err) => err.message);
                 res.status(400).json({ errors });
             } else {
