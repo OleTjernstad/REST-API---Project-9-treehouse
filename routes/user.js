@@ -29,7 +29,8 @@ router.post(
                 error.name === 'SequelizeValidationError' ||
                 error.name === 'SequelizeUniqueConstraintError'
             ) {
-                res.json({ error });
+                const errors = error.errors.map((err) => err.message);
+                res.status(400).json({ errors });
             } else {
                 throw error;
             }
