@@ -57,16 +57,54 @@ router.post(
 );
 
 router.put(
-    ':id',
+    '/:id',
     asyncHandler(async (req, res, next) => {
-        res.json();
+        try {
+            let course = await Course.findByPk(req.params.id);
+            if (course) {
+                course = await Course.update(req.body, {
+                    where: { id: req.body.id }
+                });
+                res.status(204).end();
+            }
+            res.status(404).json({ errors: ['Course not found'] });
+        } catch (error) {
+            console.log(error);
+            if (
+                error.name === 'SequelizeValidationError' ||
+                error.name === 'SequelizeUniqueConstraintError'
+            ) {
+                const errors = error.errors.map((err) => err.message);
+                res.status(400).json({ errors });
+            } else {
+                throw error;
+            }
+        }
     })
 );
 
 router.delete(
-    ':id',
+    '/:id',
     asyncHandler(async (req, res, next) => {
-        res.json();
+        try {
+            const course = await Course.findByPk(req.params.id);
+            if (course) {
+                await course.destroy();
+                res.status(204).end();
+            }
+            res.status(404).json({ errors: ['Course not found'] });
+        } catch (error) {
+            console.log(error);
+            if (
+                error.name === 'SequelizeValidationError' ||
+                error.name === 'SequelizeUniqueConstraintError'
+            ) {
+                const errors = error.errors.map((err) => err.message);
+                res.status(400).json({ errors });
+            } else {
+                throw error;
+            }
+        }
     })
 );
 
