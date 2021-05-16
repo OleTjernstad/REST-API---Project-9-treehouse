@@ -13,6 +13,9 @@ const courseRouter = require('./routes/course');
 const enableGlobalErrorLogging =
     process.env.ENABLE_GLOBAL_ERROR_LOGGING === 'true';
 
+/**
+ * Test the db connection
+ */
 (async () => {
     await sequelize.authenticate();
 
@@ -36,17 +39,24 @@ app.get('/', (req, res) => {
     });
 });
 
+/**
+ * Routes
+ */
 app.use('/api/users', userRouter);
 app.use('/api/courses', courseRouter);
 
-// send 404 if no other route matched
+/**
+ * 404 handler
+ */
 app.use((req, res) => {
     res.status(404).json({
         message: 'Route Not Found'
     });
 });
 
-// setup a global error handler
+/**
+ * Global error handler
+ */
 app.use((err, req, res, next) => {
     if (enableGlobalErrorLogging) {
         console.error(`Global error handler: ${JSON.stringify(err.stack)}`);

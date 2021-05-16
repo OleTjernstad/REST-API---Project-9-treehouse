@@ -1,12 +1,15 @@
 const express = require('express');
 const router = express.Router();
 
-const { authenticateUser } = require('../middleware/auth-user');
+const { authenticateUser } = require('../middleware/authentication');
 
 const asyncHandler = require('../tools/handler');
 
 const { Course, User } = require('../models');
 
+/**
+ * get all courses route "/api/courses"
+ */
 router.get(
     '',
     asyncHandler(async (req, res, next) => {
@@ -28,6 +31,9 @@ router.get(
     })
 );
 
+/**
+ * Get course by id, "/api/courses/:id"
+ */
 router.get(
     '/:id',
     asyncHandler(async (req, res, next) => {
@@ -45,6 +51,9 @@ router.get(
                 }
             ]
         });
+        /**
+         * Check if course id exist in db
+         */
         if (course) {
             res.json({ course });
         } else {
@@ -53,6 +62,9 @@ router.get(
     })
 );
 
+/**
+ * Post new course route "/api/courses" Requires login
+ */
 router.post(
     '',
     authenticateUser,
@@ -64,10 +76,10 @@ router.post(
             res.status(201).end();
         } catch (error) {
             console.log(error);
-            if (
-                error.name === 'SequelizeValidationError' ||
-                error.name === 'SequelizeUniqueConstraintError'
-            ) {
+            /**
+             * Check if there are validation errors
+             */
+            if (error.name === 'SequelizeValidationError') {
                 const errors = error.errors.map((err) => err.message);
                 res.status(400).json({ errors });
             } else {
@@ -77,6 +89,9 @@ router.post(
     })
 );
 
+/**
+ * Update course "/api/courses/:id" Requires login
+ */
 router.put(
     '/:id',
     authenticateUser,
@@ -89,13 +104,20 @@ router.put(
                     }
                 ]
             });
+            /**
+             * Check if course id exists in db
+             */
             if (course) {
+                /**
+                 * Check if current user and the owner of the course is the same
+                 */
                 if (course.User.id == req.currentUser.id) {
                     course = await Course.update(req.body, {
                         where: { id: req.body.id }
                     });
                     res.status(204).end();
                 } else {
+                    // If currentUser don't own the course send a 403
                     res.status(403).end();
                 }
             } else {
@@ -113,6 +135,9 @@ router.put(
     })
 );
 
+/**
+ * Delete the course by id "/api/courses/:id" requires login
+ */
 router.delete(
     '/:id',
     authenticateUser,
@@ -126,7 +151,13 @@ router.delete(
                 ]
             });
 
+            /**
+             * Check if the course exists in db
+             */
             if (course) {
+                /**
+                 * Check if current user and course owner is the same
+                 */
                 if (course.User.id == req.currentUser.id) {
                     await course.destroy();
                     res.status(204).end();
